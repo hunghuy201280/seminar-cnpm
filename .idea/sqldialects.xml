@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/mysql/initdb/01_user_migration.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/mysql/initdb/02_vn_province_migration_create.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/mysql/initdb/03_vn_province_migration_insert.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/mysql/initdb/04_real_estate_migration.sql" dialect="MySQL" />
+  </component>
+</project>

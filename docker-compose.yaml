@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  auth-service:
+    build: auth-service
+    image: auth-service:1.2
+  s3-service:
+    build:
+      context: s3-service
+    image: s3-service:1.2
+#  chat_service:
+#    build:
+#      context: ./chat_service
+#    image: chat-service:1.0
+
+
