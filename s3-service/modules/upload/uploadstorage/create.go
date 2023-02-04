@@ -5,7 +5,7 @@ import (
 	"s3-service/common"
 )
 
-func (store *sqlStore) CreateImage(ctx context.Context, data *common.Image) error {
+func (store *sqlStore) CreateImage(ctx context.Context, data *common.File) error {
 	db := store.db
 	if err := db.Table(data.TableName()).Create(data).Error; err != nil {
 		return common.ErrDB(err)

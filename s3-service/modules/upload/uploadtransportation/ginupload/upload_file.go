@@ -5,6 +5,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"s3-service/common"
+	"s3-service/common/apicommon"
 	"s3-service/component"
 	"s3-service/modules/upload/uploadbiz"
 	"s3-service/modules/upload/uploadstorage"
@@ -22,7 +23,9 @@ func Upload(ctx component.AppContext) gin.HandlerFunc {
 		//if err != nil {
 		//	panic(common.ErrInvalidRequest(err))
 		//}
-		folder := c.DefaultPostForm("folder", "img")
+		tokenPayload, err := apicommon.GetTokenPayload(c)
+
+		folder := c.DefaultPostForm("folder", "files")
 		file, err := fileHeader.Open()
 
 		if err != nil {
@@ -45,7 +48,7 @@ func Upload(ctx component.AppContext) gin.HandlerFunc {
 		imgStore := uploadstorage.NewSQLStore(ctx.GetMainDbConnection())
 
 		biz := uploadbiz.NewUploadBiz(ctx.GetUploadProvider(), imgStore)
-		img, err := biz.Upload(c.Request.Context(), dataBytes, folder, fileHeader.Filename)
+		img, err := biz.Upload(c.Request.Context(), dataBytes, folder, fileHeader.Filename, tokenPayload.UserId)
 
 		if err != nil {
 			panic(err)

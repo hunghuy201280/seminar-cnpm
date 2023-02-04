@@ -6,7 +6,7 @@ services:
   s3-service:
     build:
       context: s3-service
-    image: s3-service:1.2
+    image: s3-service:1.5
 #  chat_service:
 #    build:
 #      context: ./chat_service

@@ -51,7 +51,7 @@ func NewS3Provider(
 	return provider
 }
 
-func (provider s3Provider) SaveFileUploaded(ctx context.Context, data []byte, dst string) (*common.Image, error) {
+func (provider s3Provider) SaveFileUploaded(ctx context.Context, data []byte, dst string) (*common.File, error) {
 	fileBytes := bytes.NewReader(data)
 	fileType := http.DetectContentType(data)
 
@@ -65,9 +65,8 @@ func (provider s3Provider) SaveFileUploaded(ctx context.Context, data []byte, ds
 	if err != nil {
 		return nil, err
 	}
-	img := &common.Image{
-		Url:       fmt.Sprintf("%s/%s", "https://"+provider.domain, dst),
-		CloudName: "s3",
+	img := &common.File{
+		Url: fmt.Sprintf("%s/%s", "https://"+provider.domain, dst),
 	}
 	return img, nil
 }

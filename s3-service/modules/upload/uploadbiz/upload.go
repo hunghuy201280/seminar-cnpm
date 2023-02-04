@@ -1,7 +1,6 @@
 package uploadbiz
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"image"
@@ -16,7 +15,7 @@ import (
 )
 
 type CreateImageStorage interface {
-	CreateImage(context context.Context, data *common.Image) error
+	CreateImage(context context.Context, data *common.File) error
 }
 
 type uploadBiz struct {
@@ -28,39 +27,33 @@ func NewUploadBiz(provider uploadprovider.UploadProvider, store CreateImageStora
 	return &uploadBiz{store: store, provider: provider}
 }
 
-func (biz *uploadBiz) Upload(ctx context.Context, data []byte,
-	folder, fileName string,
-) (*common.Image, error) {
-	fileBytes := bytes.NewBuffer(data)
-	w, h, err := getImageDimension(fileBytes)
-
-	if err != nil {
-		return nil, uploadmodel.ErrFileIsNotImage(err)
-	}
+func (biz *uploadBiz) Upload(
+	ctx context.Context, data []byte,
+	folder, fileName string, userId int,
+) (*common.File, error) {
 
 	if strings.TrimSpace(folder) == "" {
-		folder = "img"
+		folder = "files"
 	}
 
 	fileExt := filepath.Ext(fileName)
 	fileName = fmt.Sprintf("%d%s", time.Now().Nanosecond(), fileExt)
 
-	img, err := biz.provider.SaveFileUploaded(ctx, data,
+	file, err := biz.provider.SaveFileUploaded(ctx, data,
 		fmt.Sprintf("%s/%s", folder, fileName))
 	if err != nil {
 		return nil, uploadmodel.ErrCannotSaveFile(err)
 	}
-	img.Width = w
-	img.Height = h
-	img.CloudName = "s3"
-	img.Extension = fileExt
+	file.Extension = fileExt
+	file.OwnerId = userId
+	file.FileName = fileName
 
-	if err := biz.store.CreateImage(ctx, img); err != nil {
+	if err := biz.store.CreateImage(ctx, file); err != nil {
 		//delete image on S3
 		return nil, uploadmodel.ErrCannotSaveFile(err)
 	}
 
-	return img, nil
+	return file, nil
 
 }
 
