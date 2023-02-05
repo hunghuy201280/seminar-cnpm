@@ -20,6 +20,6 @@ COPY --from=builder /app/configs /app/configs
 
 RUN chmod +x ./wait-for-it.sh
 EXPOSE 3090
-CMD ./wait-for-it.sh th2-mysql-service:3307 -t 120 && ./service
+CMD ./service
 
 

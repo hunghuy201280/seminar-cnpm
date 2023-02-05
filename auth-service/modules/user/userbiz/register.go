@@ -51,7 +51,7 @@ func (biz *registerBiz) Register(ctx context.Context, data *usermodel.UserCreate
 		return nil, common.ErrCannotCreateEntity(data.TableName(), err)
 	}
 
-	data.Role = usermodel.BUYER.String()
+	data.Role = usermodel.STUDENT.String()
 	data.Status = entitycommon.NORMAL
 	data.Salt = salt
 	userId, err := store.CreateUser(ctx, data)

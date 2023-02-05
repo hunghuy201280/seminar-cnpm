@@ -5,10 +5,9 @@ import "database/sql/driver"
 type UserRole string
 
 const (
-	BUYER  UserRole = "buyer"
-	SELLER UserRole = "seller"
-	AGENCY UserRole = "agency"
-	ADMIN  UserRole = "admin"
+	STUDENT UserRole = "student"
+	TEACHER UserRole = "teacher"
+	ADMIN   UserRole = "admin"
 )
 
 func (r UserRole) String() string {
