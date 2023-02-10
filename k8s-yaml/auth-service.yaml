@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-api-service
+  labels:
+    app: auth-api-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-api-service
+  template:
+    metadata:
+      labels:
+        app: auth-api-service
+    spec:
+      containers:
+        - name: auth-api-service
+          image: auth-service:1.4
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 4090
+          env:
+            - name: AUTH_DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap
+                  key: db_url
+            - name: AUTH_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap
+                  key: auth_port
+            - name: AUTH_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: jwt_secret
+            - name: AUTH_JWT_REFRESH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: jwt_refresh_secret
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+spec:
+  selector:
+    app: auth-api-service
+  type: ClusterIP
+  ports:
+    - port: 4090
+      targetPort: 4090

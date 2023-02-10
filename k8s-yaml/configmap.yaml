@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configmap
+data:
+  allow_empty_password: "yes"
+  mysql_lang: "C.UTF-8"
+  s3_api_port: "3090"
+  auth_port: "4090"
+  db_url: "admin:12345678@tcp(database-1.caqnrxm142eu.us-west-2.rds.amazonaws.com)/th2?parseTime=true"

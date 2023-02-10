@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s3-api-service
+  labels:
+    app: s3-api-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: s3-api-service
+  template:
+    metadata:
+      labels:
+        app: s3-api-service
+    spec:
+      containers:
+        - name: s3-api-service
+          image: s3-service:1.5
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3090
+          env:
+            - name: S3_API_DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap
+                  key: db_url
+            - name: S3_API_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap
+                  key: s3_api_port
+            - name: S3_API_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: jwt_secret
+            - name: S3_API_JWT_REFRESH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: jwt_refresh_secret
+            - name: S3_API_S3_BUCKET_NAME
+              valueFrom:
+                  secretKeyRef:
+                    name: s3-secret
+                    key: s3_bucket_name
+            - name: S3_API_S3_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secret
+                  key: s3_region
+            - name: S3_API_S3_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secret
+                  key: s3_api_key
+            - name: S3_API_S3_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secret
+                  key: s3_secret
+            - name: S3_API_S3_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secret
+                  key: s3_domain
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: s3-service
+spec:
+  selector:
+    app: s3-api-service
+  type: ClusterIP
+  ports:
+    - port: 3090
+      targetPort: 3090

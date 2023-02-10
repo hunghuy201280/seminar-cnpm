@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: th2-mysql-deployment
+  labels:
+    app: th2-mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: th2-mysql
+  template:
+    metadata:
+      labels:
+        app: th2-mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - mountPath: "/var/lib/mysql"
+              name: th2-mysql-storage
+              subPath: data
+            - mountPath: "/docker-entrypoint-initdb.d"
+              name: th2-mysql-storage
+              subPath: initdb
+            - mountPath: "/etc/mysql/conf.d"
+              name: th2-mysql-storage
+              subPath: conf
+          env:
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap
+                  key: allow_empty_password
+            - name: LANG
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap
+                  key: mysql_lang
+
+      volumes:
+        - name: th2-mysql-storage
+          persistentVolumeClaim:
+            claimName: th2-mysql-volume-claim
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: th2-mysql-service
+spec:
+  selector:
+    app: th2-mysql
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 3307
+      targetPort: 3306
